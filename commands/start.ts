@@ -1,12 +1,11 @@
 import { ActivityType } from "discord.js"
+import type { CacheType, ChatInputCommandInteraction, Client } from 'discord.js'
 import { ServerStatus } from "../enums"
-import { isServerOnline } from "../service/apiService"
-import { exec } from 'child_process'
+import { isServerOnline, startServer } from "../service/apiService"
 export default <Command>{
     name: 'start',
-    description: 'Start the Palworld Server.',
-    action: async (interaction, client) => {
-        await interaction.deferReply()
+    description: 'Start the Palworld server.',
+    action: async (interaction : ChatInputCommandInteraction<CacheType>, client : Client<boolean>) => {
         return isServerOnline()
         .then(async (isOnline) => {
             if(isOnline) {
@@ -21,17 +20,4 @@ export default <Command>{
             }
         })
     }
-}
-
-const startServer = () => {
-    const shellCommand = 'sudo systemctl start palserver'
-    return new Promise((resolve, reject) => {
-        exec(shellCommand, (err, stdout, stderr) => {
-            if (err || stderr) {
-                console.error(err || stderr)
-                reject(`Error executing start command ${err || stderr}`)
-            }
-            resolve(stdout)
-        })
-    })
 }

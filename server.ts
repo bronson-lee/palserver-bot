@@ -1,4 +1,4 @@
-import { ActivityType, Client, Events, GatewayIntentBits } from 'discord.js';
+import { ActivityType, ChannelType, Client, Events, GatewayIntentBits } from 'discord.js';
 import { commands } from './commands'
 import { isServerOnline } from './service/apiService'
 import { ServerStatus } from './enums';
@@ -35,9 +35,10 @@ client.on(Events.ClientReady, readyClient => {
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
-    
+
     for(const command of commands) {
         if(command.name === interaction.commandName) {
+			await interaction.deferReply()
             await command.action( interaction, client )
             return;
         }
