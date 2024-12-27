@@ -1,7 +1,9 @@
-import { ActivityType, ChannelType, Client, Events, GatewayIntentBits } from 'discord.js';
+import { ActivityType, Client, Events, GatewayIntentBits } from 'discord.js';
+import type { CacheType, ChatInputCommandInteraction } from 'discord.js'
 import { commands } from './commands'
 import { isServerOnline } from './service/apiService'
 import { ServerStatus } from './enums';
+import CommandLock from './models/commandLock';
 const { DISCORD_TOKEN } = process.env
 
 if(!DISCORD_TOKEN) {
@@ -14,6 +16,23 @@ const teardown = () => {
     })
     client.destroy()
     process.exit(0)
+}
+
+const processCommand = async (command : Command, interaction : ChatInputCommandInteraction<CacheType>, client : Client<boolean>) : Promise<any> => {
+    await interaction.deferReply()
+
+    const { name, requiresLock } = command
+    if(!requiresLock) {
+        return command.action( interaction, client )
+    } else {
+        if(CommandLock.isLocked()) {
+            return interaction.editReply(`Cannot /${name} at this time. Please try again later.`)
+        } else {
+            CommandLock.setLock(true)
+            return command.action( interaction, client )
+            .finally(() => CommandLock.setLock(false))
+        }
+    }
 }
 
 const isOnline = await isServerOnline()
@@ -34,13 +53,12 @@ client.on(Events.ClientReady, readyClient => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isChatInputCommand()) return;
+    if (!interaction.isChatInputCommand()) return
 
     for(const command of commands) {
         if(command.name === interaction.commandName) {
-			await interaction.deferReply()
-            await command.action( interaction, client )
-            return;
+            await processCommand(command, interaction, client)
+            return
         }
     }
 
