@@ -6,6 +6,7 @@ import { sleep } from "bun";
 export default<Command> {
     name: 'restart',
     description: "Restart the Palworld server.",
+    requiresLock: true,
     action: async (interaction : ChatInputCommandInteraction<CacheType>, client : Client<boolean> ) => {
         return isServerOnline()
         .then(async (isOnline) => {
@@ -36,6 +37,7 @@ export default<Command> {
                 return interaction.editReply("Failed to restart the server. An error has occured!")  
             } catch (err) {
                 console.error("A fatal exception has occured!", err)
+                return
             }
         })
     }

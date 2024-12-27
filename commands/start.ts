@@ -5,6 +5,7 @@ import { isServerOnline, startServer } from "../service/apiService"
 export default <Command>{
     name: 'start',
     description: 'Start the Palworld server.',
+    requiresLock: true,
     action: async (interaction : ChatInputCommandInteraction<CacheType>, client : Client<boolean>) => {
         return isServerOnline()
         .then(async (isOnline) => {

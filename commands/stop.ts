@@ -4,6 +4,7 @@ import { ServerStatus } from "../enums"
 export default <Command>{
     name: 'stop',
     description: 'Stop the Palworld server.',
+    requiresLock: true,
     action: async (interaction : ChatInputCommandInteraction<CacheType>, client : Client<boolean> ) => {
         return isServerOnline()
         .then(async (isOnline) => {

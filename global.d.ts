@@ -2,7 +2,8 @@ declare global {
     interface Command {
         name: string,
         description: string,
-        action: (interaction : ChatInputCommandInteraction<CacheType>, client : Client<boolean> ) => any
+        requiresLock?: boolean,
+        action: (interaction : ChatInputCommandInteraction<CacheType>, client : Client<boolean> ) => Promise<any>
     }
 }
 
