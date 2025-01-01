@@ -1,12 +1,9 @@
 import { exec } from 'child_process'
+import { getInfo } from '../connectors/palworldConnector'
 
 export const isServerOnline = async () : Promise<boolean> => {
-    return fetch('http://localhost:8212/v1/api/info', {
-        headers: {
-            Authorization: 'Basic YWRtaW46YWRtaW4='
-        }
-    }).then((response) => {
-        return response.status == 200
+    return getInfo().then((response) => {
+        return Boolean(response.version)
     }).catch((err) => {
         return false
     })
@@ -15,12 +12,17 @@ export const isServerOnline = async () : Promise<boolean> => {
 export const startServer = () => {
     const shellCommand = 'sudo systemctl start palserver'
     return new Promise((resolve, reject) => {
-        exec(shellCommand, (err, stdout, stderr) => {
+        exec(shellCommand, async (err, stdout, stderr) => {
             if (err || stderr) {
                 console.error(err || stderr)
                 reject(`Error executing start command ${err || stderr}`)
             }
-            resolve(stdout)
+
+            let serverOnline = false
+            while (!serverOnline) {
+                serverOnline = await isServerOnline()
+            }
+            resolve(serverOnline)
         })
     })
 }
@@ -36,5 +38,4 @@ export const stopServer = () => {
             resolve(stdout)
         })
     })
-    
 }
