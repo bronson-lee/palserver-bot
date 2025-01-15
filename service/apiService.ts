@@ -1,5 +1,5 @@
 import { exec } from 'child_process'
-import { getInfo } from '../connectors/palworldConnector'
+import { getInfo, getPlayers } from '../connectors/palworldConnector'
 
 export const isServerOnline = async () : Promise<boolean> => {
     return getInfo().then((response) => {
@@ -7,6 +7,10 @@ export const isServerOnline = async () : Promise<boolean> => {
     }).catch((err) => {
         return false
     })
+}
+
+export const getPlayerCount = async () : Promise<number> => {
+    return getPlayers().then((data) => data.players.length)
 }
 
 export const startServer = () => {
