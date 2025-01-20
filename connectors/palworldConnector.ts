@@ -38,3 +38,5 @@ palworldClient.interceptors.response.use((response : AxiosResponse) => response.
 export const getInfo = () : Promise<PalworldServerInfoResponse> => palworldClient.get('/v1/api/info')
 
 export const getPlayers = () : Promise<PalworldPlayersResponse> => palworldClient.get('/v1/api/players')
+
+export const save = () : Promise<void> => palworldClient.post('/v1/api/save')
