@@ -5,6 +5,8 @@ import { isServerOnline } from './service/apiService'
 import { ServerStatus } from './enums';
 import CommandLock from './models/commandLock';
 import checkPlayersOnline from './scripts/checkPlayersJob';
+import updateServerJob from './scripts/updateServerJob';
+
 const { DISCORD_TOKEN } = process.env
 
 if(!DISCORD_TOKEN) {
@@ -71,3 +73,4 @@ process.on('SIGTERM', teardown)
 
 client.login(process.env.DISCORD_TOKEN);
 setInterval(() => checkPlayersOnline(client), 600000)
+updateServerJob()

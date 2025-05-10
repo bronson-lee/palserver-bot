@@ -43,3 +43,16 @@ export const stopServer = () => {
         })
     })
 }
+
+export const updateServer = () => {
+    const shellCommand = `HOME=$HOME /usr/games/steamcmd +login anonymous +app_update 2394010 validate +quit`
+    return new Promise((resolve, reject) => {
+        exec(shellCommand, (err, stdout, stderr) => {
+            if(err || stderr) {
+                reject(`Error updating server. ${err || stderr}`)
+            }
+    
+            resolve(stdout)
+        })
+    })
+}
