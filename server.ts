@@ -31,9 +31,9 @@ const processCommand = async (command : Command, interaction : ChatInputCommandI
         if(CommandLock.isLocked()) {
             return interaction.editReply(`Cannot /${name} at this time. Please try again later.`)
         } else {
-            CommandLock.setLock(true)
+            CommandLock.lock()
             return command.action( interaction, client )
-            .finally(() => CommandLock.setLock(false))
+            .finally(CommandLock.unlock)
         }
     }
 }
