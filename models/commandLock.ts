@@ -1,11 +1,15 @@
 export default class CommandLock {
-    private static lock : boolean = false
+    static #lockState : boolean = false
 
-    public static isLocked() {
-        return this.lock;
+    static isLocked() {
+        return CommandLock.#lockState;
     }
 
-    public static setLock( state : boolean ) {
-        this.lock = state
+    static lock() {
+        CommandLock.#lockState = true
+    }
+
+    static unlock() {
+        CommandLock.#lockState = false
     }
 }

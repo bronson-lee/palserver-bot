@@ -14,7 +14,8 @@ export default <Command>{
                 const playersOnline = await getPlayers()
                 const playersOnlineCount = playersOnline.players.length
                 if(playersOnlineCount) {
-                    return interaction.editReply(`Could not stop server. There ${playersOnlineCount == 1 ? 'is' : 'are'} still ${playersOnlineCount} player${playersOnlineCount > 1 ? 's' : ''} online`)
+                    const onePlayerOnline = playersOnlineCount == 1
+                    return interaction.editReply(`Could not stop server. There ${onePlayerOnline ? 'is' : 'are'} still ${playersOnlineCount} player${!onePlayerOnline ? 's' : ''} online`)
                 } else {
                     await save()
                     await stopServer()
