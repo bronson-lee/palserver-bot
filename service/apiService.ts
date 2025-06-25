@@ -1,6 +1,8 @@
 import { exec } from 'child_process'
 import { getInfo, getPlayers } from '../connectors/palworldConnector'
 
+let PROCESS : Bun.Subprocess | null = null
+
 export const isServerOnline = async () : Promise<boolean> => {
     return getInfo().then((response) => {
         return Boolean(response.version)
@@ -14,38 +16,31 @@ export const getPlayerCount = async () : Promise<number> => {
 }
 
 export const startServer = () => {
-    const shellCommand = 'sudo systemctl start palserver'
-    return new Promise((resolve, reject) => {
-        exec(shellCommand, async (err, stdout, stderr) => {
-            if (err || stderr) {
-                console.error(err || stderr)
-                reject(`Error executing start command ${err || stderr}`)
-            }
+    PROCESS = Bun.spawn(['sh', './game/PalServer.sh'])
 
-            let serverOnline = false
-            while (!serverOnline) {
-                serverOnline = await isServerOnline()
-            }
-            resolve(serverOnline)
-        })
+    return new Promise(async (resolve, reject) => {
+        let serverOnline = false
+        while (!serverOnline) {
+            serverOnline = await isServerOnline()
+        }
+        resolve(serverOnline)
     })
 }
 
 export const stopServer = () => {
-    const shellCommand = `sudo systemctl stop palserver`
-    return new Promise((resolve, reject) => {
-        exec(shellCommand, (err, stdout, stderr) => {
-            if (err || stderr) {
-                reject(`Error executing stop command ${err || stderr}`)
-            }
+    if(!PROCESS) {
+        return Promise.resolve(true)
+    }
 
-            resolve(stdout)
-        })
+    return new Promise((resolve, reject) => {
+        PROCESS?.kill('SIGTERM')
+        PROCESS = null
+        resolve(true)
     })
 }
 
 export const updateServer = () => {
-    const shellCommand = `HOME=$HOME /usr/games/steamcmd +login anonymous +app_update 2394010 validate +quit`
+    const shellCommand = `$HOME/steamcmd/steamcmd.sh +login anonymous +app_update 2394010 +quit`
     return new Promise((resolve, reject) => {
         exec(shellCommand, (err, stdout, stderr) => {
             if(err || stderr) {
