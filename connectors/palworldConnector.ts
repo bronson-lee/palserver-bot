@@ -39,4 +39,6 @@ export const getInfo = () : Promise<PalworldServerInfoResponse> => palworldClien
 
 export const getPlayers = () : Promise<PalworldPlayersResponse> => palworldClient.get('/v1/api/players')
 
-export const save = () : Promise<void> => palworldClient.post('/v1/api/save')
+export const saveGame = () : Promise<void> => palworldClient.post('/v1/api/save')
+
+export const stopGame = () : Promise<void> => palworldClient.post('/v1/api/stop')

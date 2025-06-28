@@ -1,7 +1,7 @@
 import { ActivityType } from "discord.js"
 import type { CacheType, ChatInputCommandInteraction, Client } from 'discord.js'
 import { ServerStatus } from "../enums"
-import { isServerOnline, startServer } from "../service/apiService"
+import { isServerOnline, startServer, updateServer } from "../service/apiService"
 export default <Command>{
     name: 'start',
     description: 'Start the Palworld server.',
@@ -12,6 +12,7 @@ export default <Command>{
             if(isOnline) {
                 return interaction.editReply("Server is already online.")
             } else {
+                await updateServer()
                 await startServer()
                 client.user?.setActivity({
                     name: ServerStatus.ONLINE,

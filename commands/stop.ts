@@ -1,8 +1,8 @@
 import { ActivityType, Message } from "discord.js"
 import type { CacheType, ChatInputCommandInteraction, Client } from 'discord.js'
-import { isServerOnline, stopServer } from "../service/apiService"
+import { isServerOnline } from "../service/apiService"
 import { ServerStatus } from "../enums"
-import { getPlayers, save } from "../connectors/palworldConnector"
+import { getPlayers, saveGame, stopGame } from "../connectors/palworldConnector"
 export default <Command>{
     name: 'stop',
     description: 'Stop the Palworld server.',
@@ -17,8 +17,8 @@ export default <Command>{
                     const onePlayerOnline = playersOnlineCount == 1
                     return interaction.editReply(`Could not stop server. There ${onePlayerOnline ? 'is' : 'are'} still ${playersOnlineCount} player${!onePlayerOnline ? 's' : ''} online`)
                 } else {
-                    await save()
-                    await stopServer()
+                    await saveGame()
+                    await stopGame()
                     client.user?.setActivity({
                         name: ServerStatus.OFFLINE,
                         type: ActivityType.Custom

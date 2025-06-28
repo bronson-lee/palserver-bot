@@ -1,7 +1,8 @@
 import { ActivityType, type CacheType, type ChatInputCommandInteraction, type Client } from "discord.js";
-import { isServerOnline, startServer, stopServer } from "../service/apiService";
+import { isServerOnline, startServer } from "../service/apiService";
 import { ServerStatus } from "../enums";
 import { sleep } from "bun";
+import { stopGame } from "../connectors/palworldConnector";
 
 export default<Command> {
     name: 'restart',
@@ -17,7 +18,7 @@ export default<Command> {
                     name: ServerStatus.RESTART,
                     type: ActivityType.Custom
                 })
-                await stopServer()
+                await stopGame()
                 await sleep(1000)
                 await startServer()
                 client.user?.setActivity({
@@ -29,7 +30,7 @@ export default<Command> {
         }).catch(async (err) => {
             console.error(err)
             try {
-                await stopServer()
+                await stopGame()
                 client.user?.setActivity({
                     name: ServerStatus.OFFLINE,
                     type: ActivityType.Custom

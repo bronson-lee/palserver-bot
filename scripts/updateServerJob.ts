@@ -19,9 +19,9 @@ export default () => {
         console.log("Running scheduled update.")
         CommandLock.lock()
         const start = new Date().getTime()
-        updateServer().then(() => handleUpdateSuccess(start)).catch((err) => {
+        updateServer(true).then(() => handleUpdateSuccess(start)).catch((err) => {
             console.error("Will retry update once more.", err)
-            return updateServer().then(() => handleUpdateSuccess(start)).catch((err) => {
+            return updateServer(true).then(() => handleUpdateSuccess(start)).catch((err) => {
                 console.error(err, "Update failed twice. Manual update may be required.")
             })
         }).finally(CommandLock.unlock)
