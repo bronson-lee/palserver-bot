@@ -1,5 +1,6 @@
 import cron from 'node-cron'
 import { isServerOnline, updateServer } from '../service/apiService';
+import CommandLock from '../models/commandLock';
 
 const handleUpdateSuccess = (startTime : number ) => {
     const endTime = new Date().getTime()
@@ -16,13 +17,14 @@ export default () => {
         }
 
         console.log("Running scheduled update.")
+        CommandLock.lock()
         const start = new Date().getTime()
         updateServer().then(() => handleUpdateSuccess(start)).catch((err) => {
-            console.error(err, "Will retry update once more.")
-            updateServer().then(() => handleUpdateSuccess(start)).catch((err) => {
+            console.error("Will retry update once more.", err)
+            return updateServer().then(() => handleUpdateSuccess(start)).catch((err) => {
                 console.error(err, "Update failed twice. Manual update may be required.")
             })
-        })
+        }).finally(CommandLock.unlock)
     });
 }
 

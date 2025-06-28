@@ -1,11 +1,21 @@
 export default class CommandLock {
-    private static lock : boolean = false
+    static #lockState : boolean = false
 
-    public static isLocked() {
-        return this.lock;
+    static isLocked() {
+        return CommandLock.#lockState;
     }
 
-    public static setLock( state : boolean ) {
-        this.lock = state
+    static lock() {
+        if(!CommandLock.#lockState) {
+            CommandLock.#lockState = true
+            console.log("Successfully locked state.")
+        } else {
+            throw "Attempted to obtain lock while state is already locked."
+        }
+    }
+
+    static unlock() {
+        CommandLock.#lockState = false
+        console.log("Successfully unlocked state.")
     }
 }
