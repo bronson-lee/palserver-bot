@@ -1,8 +1,6 @@
 import { exec } from 'child_process'
 import { getInfo, getPlayers } from '../connectors/palworldConnector'
 
-let PROCESS : Bun.Subprocess | null = null
-
 export const isServerOnline = async () : Promise<boolean> => {
     return getInfo().then((response) => {
         return Boolean(response.version)
@@ -16,7 +14,7 @@ export const getPlayerCount = async () : Promise<number> => {
 }
 
 export const startServer = () => {
-    PROCESS = Bun.spawn(['sh', './game/PalServer.sh'])
+    Bun.spawn(['sh', './game/PalServer.sh'])
 
     return new Promise(async (resolve, reject) => {
         let serverOnline = false
@@ -27,20 +25,9 @@ export const startServer = () => {
     })
 }
 
-export const stopServer = () => {
-    if(!PROCESS) {
-        return Promise.resolve(true)
-    }
-
-    return new Promise((resolve, reject) => {
-        PROCESS?.kill('SIGTERM')
-        PROCESS = null
-        resolve(true)
-    })
-}
-
-export const updateServer = () => {
-    const shellCommand = `$HOME/steamcmd/steamcmd.sh +login anonymous +app_update 2394010 +quit`
+export const updateServer = (isValidate : boolean = false) => {
+    const validate = isValidate ? "validate " : ""
+    const shellCommand = `$HOME/steamcmd/steamcmd.sh +force_install_dir $HOME/game +login anonymous +app_update 2394010 ${validate}+quit`
     return new Promise((resolve, reject) => {
         exec(shellCommand, (err, stdout, stderr) => {
             if(err || stderr) {

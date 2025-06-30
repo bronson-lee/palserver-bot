@@ -1,5 +1,6 @@
+import { stopGame } from "../connectors/palworldConnector"
 import { ServerStatus } from "../enums"
-import { getPlayerCount, isServerOnline, stopServer } from "../service/apiService"
+import { getPlayerCount, isServerOnline } from "../service/apiService"
 import { ActivityType, type Client } from 'discord.js'
 
 let LAST_CHECKED_PLAYERS_ONLINE = true
@@ -14,7 +15,7 @@ export default async function checkPlayersOnline(discordClient : Client<boolean>
                     name: ServerStatus.OFFLINE,
                     type: ActivityType.Custom
                 })
-                stopServer()
+                stopGame()
             } else {
                 LAST_CHECKED_PLAYERS_ONLINE = currentlyHasPlayersOnline
             }
