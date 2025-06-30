@@ -1,5 +1,5 @@
 import { InteractionContextType, REST, Routes, SharedSlashCommand, SlashCommandBuilder } from 'discord.js';
-import { commands } from '../commands'
+import { commands } from '../src/commands'
 const { DISCORD_TOKEN, DISCORD_CLIENT_ID } = process.env
 if (!DISCORD_TOKEN || !DISCORD_CLIENT_ID) {
     throw "CLIENT_ID or TOKEN not configured."

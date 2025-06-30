@@ -1,16 +1,18 @@
 import { ActivityType, Client, Events, GatewayIntentBits } from 'discord.js';
 import type { CacheType, ChatInputCommandInteraction } from 'discord.js'
-import { commands } from './commands'
-import { isServerOnline } from './service/apiService'
-import { ServerStatus } from './enums';
-import CommandLock from './models/commandLock';
-import checkPlayersOnline from './scripts/checkPlayersJob';
-import updateServerJob from './scripts/updateServerJob';
+import { commands } from './src/commands'
+import { isServerOnline } from './src/service/apiService'
+import { ServerStatus } from './src/enums';
+import CommandLock from './src/models/commandLock';
+import checkPlayersOnline from './src/service/checkPlayersJob';
+import updateServerJob from './src/service/updateServerJob';
+import logger from './src/utils/logger';
 
 const { DISCORD_TOKEN } = process.env
 
 if(!DISCORD_TOKEN) {
-    throw 'Unset DISCORD_TOKEN environment variable.'
+    logger.error('Unset DISCORD_TOKEN environment variable.')
+    process.exit(0)
 }
 const teardown = () => {
     client.user?.setPresence({
@@ -22,6 +24,7 @@ const teardown = () => {
 }
 
 const processCommand = async (command : Command, interaction : ChatInputCommandInteraction<CacheType>, client : Client<boolean>) : Promise<any> => {
+    logger.info(`Recieved '${command.name}' command`)
     await interaction.deferReply()
 
     const { name, requiresLock } = command
@@ -52,7 +55,7 @@ const client = new Client({
 });
 
 client.on(Events.ClientReady, readyClient => {
-    console.log(`Logged in as ${readyClient.user.tag}!`);
+    logger.info(`Logged in as ${readyClient.user.tag}!`);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -65,7 +68,7 @@ client.on(Events.InteractionCreate, async interaction => {
         }
     }
 
-    throw `Unhandled command '${interaction.commandName}'`
+    logger.error(`Recieved unhandled command '${interaction.commandName}'`)
 });
 
 process.on('SIGINT', teardown)
