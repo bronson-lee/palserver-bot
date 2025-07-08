@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios'
+import { handleClientErrors, handleClientResponse } from '../utils/helper';
 
 export type PalworldServerInfoResponse = {
     version: string,
@@ -33,12 +34,12 @@ const palworldClient : AxiosInstance = axios.create({
     }
 })
 
-palworldClient.interceptors.response.use((response : AxiosResponse) => response.data, (err) => err)
+palworldClient.interceptors.response.use(handleClientResponse, handleClientErrors)
 
-export const getInfo = () : Promise<PalworldServerInfoResponse> => palworldClient.get('/v1/api/info')
+export const getInfo = () : Promise<PalworldServerInfoResponse> => palworldClient.get('v1/api/info')
 
-export const getPlayers = () : Promise<PalworldPlayersResponse> => palworldClient.get('/v1/api/players')
+export const getPlayers = () : Promise<PalworldPlayersResponse> => palworldClient.get('v1/api/players')
 
-export const saveGame = () : Promise<void> => palworldClient.post('/v1/api/save')
+export const saveGame = () : Promise<void> => palworldClient.post('v1/api/save')
 
-export const stopGame = () : Promise<void> => palworldClient.post('/v1/api/stop')
+export const stopGame = () : Promise<void> => palworldClient.post('v1/api/stop')
