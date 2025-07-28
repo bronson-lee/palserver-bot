@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AxiosInstance, AxiosResponse } from 'axios'
+import type { AxiosInstance } from 'axios'
 import { handleClientErrors, handleClientResponse } from '../utils/helper';
 
 export type PalworldServerInfoResponse = {
@@ -28,9 +28,10 @@ export type PalworldPlayer = {
 
 const palworldClient : AxiosInstance = axios.create({
     baseURL: 'http://localhost:8212',
-    timeout: 1000,
+    timeout: 10000,
     headers: {
-        "Authorization": 'Basic YWRtaW46YWRtaW4='
+        "Authorization": 'Basic YWRtaW46YWRtaW4=',
+        'content-type': 'application/json'
     }
 })
 
@@ -42,4 +43,4 @@ export const getPlayers = () : Promise<PalworldPlayersResponse> => palworldClien
 
 export const saveGame = () : Promise<void> => palworldClient.post('v1/api/save')
 
-export const stopGame = () : Promise<void> => palworldClient.post('v1/api/stop')
+export const stopGame = (timeMs : number = 1, message : string = "") : Promise<void> => palworldClient.post('v1/api/shutdown', { "waittime": timeMs, "message": message })
