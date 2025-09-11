@@ -24,10 +24,11 @@ const teardown = () => {
 }
 
 const processCommand = async (command : Command, interaction : ChatInputCommandInteraction<CacheType>, client : Client<boolean>) : Promise<any> => {
-    logger.info(`Recieved '${command.name}' command`)
     await interaction.deferReply()
 
     const { name, requiresLock } = command
+    logger.info(`Recieved '${name}' command`)
+
     if(!requiresLock) {
         return command.action( interaction, client )
     } else {
@@ -63,7 +64,12 @@ client.on(Events.InteractionCreate, async interaction => {
 
     for(const command of commands) {
         if(command.name === interaction.commandName) {
-            await processCommand(command, interaction, client)
+            const startTime = new Date().getTime()
+
+            await processCommand(command, interaction, client).then(() => {
+                const delta : number = (new Date().getTime() - startTime) / 1000
+                logger.info(`Completed '${command.name}' command in ${delta} seconds`)
+            })
             return
         }
     }
