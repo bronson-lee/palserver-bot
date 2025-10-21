@@ -77,3 +77,9 @@ process.on('SIGTERM', teardown)
 client.login(process.env.DISCORD_TOKEN);
 setInterval(() => checkPlayersOnline(client), 600000)
 updateServerJob()
+
+Bun.serve({
+	routes: {
+		'/healthcheck': new Response('OK'),
+    }
+})
