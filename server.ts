@@ -4,7 +4,6 @@ import { commands } from './src/commands'
 import { isServerOnline } from './src/service/apiService'
 import { ServerStatus } from './src/enums';
 import CommandLock from './src/models/commandLock';
-import checkPlayersOnline from './src/service/checkPlayersJob';
 import updateServerJob from './src/service/updateServerJob';
 import logger from './src/utils/logger';
 
@@ -75,7 +74,6 @@ process.on('SIGINT', teardown)
 process.on('SIGTERM', teardown)
 
 client.login(process.env.DISCORD_TOKEN);
-setInterval(() => checkPlayersOnline(client), 600000)
 updateServerJob()
 
 Bun.serve({

@@ -3,6 +3,7 @@ import type { CacheType, ChatInputCommandInteraction, Client } from 'discord.js'
 import { isServerOnline } from "../service/apiService"
 import { ServerStatus } from "../enums"
 import { getPlayers, saveGame, stopGame } from "../connectors/palworldConnector"
+import CheckPlayersService from "../service/checkPlayersJob"
 export default <Command>{
     name: 'stop',
     description: 'Stop the Palworld server.',
@@ -19,6 +20,7 @@ export default <Command>{
                 } else {
                     await saveGame()
                     await stopGame()
+                    CheckPlayersService.stopCheckInterval()
                     client.user?.setActivity({
                         name: ServerStatus.OFFLINE,
                         type: ActivityType.Custom
