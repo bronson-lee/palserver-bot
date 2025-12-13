@@ -14,27 +14,18 @@ export const getPlayerCount = async () : Promise<number> => {
 }
 
 export const startServer = () => {
-    Bun.spawn(['sh', './game/PalServer.sh'])
+    Bun.spawn(['sh', `${process.env.HOME}/game/PalServer.sh`])
 
     return new Promise(async (resolve, reject) => {
         let serverOnline = false
         while (!serverOnline) {
             serverOnline = await isServerOnline()
+            await new Promise((resolve) => setTimeout(resolve, 1000))
         }
         resolve(serverOnline)
     })
 }
 
-export const updateServer = (isValidate : boolean = false) => {
-    const validate = isValidate ? "validate " : ""
-    const shellCommand = `$HOME/steamcmd/steamcmd.sh +force_install_dir $HOME/game +login anonymous +app_update 2394010 ${validate}+quit`
-    return new Promise((resolve, reject) => {
-        exec(shellCommand, (err, stdout, stderr) => {
-            if(err || stderr) {
-                reject(`Error updating server. ${err || stderr}`)
-            }
-    
-            resolve(stdout)
-        })
-    })
+export const updateServer = async (isValidate : boolean = false) => {
+    return Bun.spawn([`${process.env.HOME}/update_game.sh`])
 }
