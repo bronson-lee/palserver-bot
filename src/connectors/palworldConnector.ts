@@ -28,7 +28,7 @@ export type PalworldPlayer = {
 
 const palworldClient : AxiosInstance = axios.create({
     baseURL: 'http://localhost:8212',
-    timeout: 1000,
+    timeout: 10000,
     headers: {
         "Authorization": 'Basic YWRtaW46YWRtaW4='
     }
