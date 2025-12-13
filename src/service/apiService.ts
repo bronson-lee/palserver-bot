@@ -1,5 +1,6 @@
 import { exec } from 'child_process'
 import { getInfo, getPlayers } from '../connectors/palworldConnector'
+import logger from '../utils/logger'
 
 export const isServerOnline = async () : Promise<boolean> => {
     return getInfo().then((response) => {
@@ -14,12 +15,13 @@ export const getPlayerCount = async () : Promise<number> => {
 }
 
 export const startServer = () => {
-    Bun.spawn(['sh', './game/PalServer.sh'])
+    Bun.spawn(['sh', `${process.env.HOME}/game/PalServer.sh`])
 
     return new Promise(async (resolve, reject) => {
         let serverOnline = false
         while (!serverOnline) {
             serverOnline = await isServerOnline()
+            await new Promise((resolve) => setTimeout(resolve, 1000))
         }
         resolve(serverOnline)
     })
